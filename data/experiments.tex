@@ -1,11 +1,34 @@
 
-\chapter{常见问题与高级用法}
+\chapter{常用可选功能与常见问题}
+
+\section{常用可选功能}
+
+\subsection{打印模式}
+
+如果论文需要双面打印，可以在主文件的导言区启用 \texttt{\textbackslash useprint}。启用后，模板会在需要的位置自动补空白页，以保持章节从合适的页面开始。
+
+\subsection{匿名评审页}
+
+硕博模板支持匿名评审页。若需要启用，只需在 \texttt{main.tex} 中取消 \texttt{\textbackslash anonymoustitlepage} 的注释，并根据论文类型填写以下信息：
+
+\begin{itemize}
+    \item 硕士 / 博士：一级学科、二级学科、论文编号；
+    \item 硕士专业 / 博士专业：专业学位类别、专业领域、学位论文/实践成果编号。
+\end{itemize}
+
+\subsection{图表清单与附录}
+
+如果论文中图片或表格较多，可以保留 \texttt{\textbackslash listoffigures} 和 \texttt{\textbackslash listoftables}。若图表较少，也可以直接注释掉。附录部分通过 \texttt{\textbackslash appendix} 与 \texttt{\textbackslash input\{data/appendix\}} 启用，适合放补充推导、额外实验结果或大段表格。
+
+\subsection{本科双学位封面与信息对齐}
+
+本科模板默认使用 \texttt{\textbackslash makebachelortitlepage}。如果是双学位或双修场景，可以切换为 \texttt{\textbackslash makebachelordoubledegreetitlepage}，并填写 \texttt{双修院系} 和 \texttt{双修专业}。如果希望封面信息左对齐，可将 \texttt{信息左对齐} 设为 \texttt{是}。
 
 \section{常见编译问题}
 
 \subsection{字体警告}
 
-在使用非Windows系统编译时，可能会出现字体相关的警告信息。这是正常现象，不影响文档生成。如需消除警告，可参考第二章的字体配置方法。
+在使用非 Windows 系统编译时，可能会出现字体相关的警告信息。这是正常现象，不影响文档生成。如需消除警告，可参考第二章的字体配置方法。
 
 \subsection{参考文献不显示}
 
@@ -27,16 +50,16 @@
     \item 路径分隔符使用正斜杠 \texttt{/}
 \end{itemize}
 
-\section{模板定制}
+\section{模板定制建议}
 
 \subsection{添加新章节}
 
 如需添加新章节，只需在 \texttt{data/} 目录下创建新的 \texttt{.tex} 文件，并在 \texttt{main.tex} 中添加 \texttt{\textbackslash include} 命令。
 
-\subsection{修改样式}
+\subsection{何时修改类文件}
 
-模板样式可以通过修改 \texttt{nkuthesis.cls} 文件进行定制，但建议谨慎操作以避免破坏格式规范。
+模板样式可以通过修改 \texttt{nkuthesis.cls} 文件进行定制，但建议优先通过现有命令和选项完成需求。只有在学校规范确实发生变化，或者已有接口无法满足需求时，再考虑调整类文件实现。
 
 \section{本章小结}
 
-通过掌握这些常见问题解决方案和高级用法，用户可以更加熟练地使用 \LaTeX 撰写南开大学学位论文。遇到问题时，建议优先查阅官方文档或寻求社区帮助。
+本章补充了打印模式、匿名评审页、本科双学位封面、图表清单与附录等可选功能，并汇总了常见编译问题。对于大多数用户而言，熟悉这些内容后已经可以覆盖完整论文写作过程中的主要需求。

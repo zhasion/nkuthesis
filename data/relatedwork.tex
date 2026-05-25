@@ -1,13 +1,13 @@
 
-\chapter{相关说明}
+\chapter{模板使用说明}
 
-\section{字体兼容问题}
+\section{编译环境与字体}
 
 \subsection{Windows 本地编译}
 
 无需任何配置，开箱即用。
 
-\subsection{非Windows平台}
+\subsection{非 Windows 平台}
 
 系统字体与 Windows 存在差异，可能影响排版细节。即使不配置字体，模板也能正常编译通过，仅在笔画细节上与标准 Windows 环境略有差异。
 
@@ -35,7 +35,7 @@
     \end{tabular}
 \end{table}
 
-\section{项目文件结构}
+\section{项目结构}
 
 项目主要包含以下文件和目录：
 
@@ -47,10 +47,22 @@
     \item \texttt{data/}：章节内容文件夹
     \item \texttt{assets/}：资源文件目录
     \item \texttt{figures/}：图片文件夹
-    \item \texttt{fonts/}：字体文件目录（可选）
+    \item \texttt{fonts/}：字体文件目录（可选，可留空）
 \end{itemize}
 
 \section{快速开始}
+
+\subsection{使用顺序}
+
+第一次使用模板时，建议按以下顺序操作：
+
+\begin{enumerate}
+    \item 选择主文件：硕博使用 \texttt{main.tex}，本科使用 \texttt{main-bachelor.tex}；
+    \item 在 \texttt{\textbackslash nkusetup\{\}} 中填写个人信息；
+    \item 修改 \texttt{data/abstract.tex} 中的中英文摘要与关键词；
+    \item 逐章替换 \texttt{data/} 中的示例正文；
+    \item 在 \texttt{main.bib} 中整理参考文献条目并重新编译。
+\end{enumerate}
 
 \subsection{编译器选择}
 
@@ -73,21 +85,28 @@
 
 \subsection{编译方式}
 
-推荐编译顺序：xelatex main.tex → biber main → xelatex main.tex → xelatex main.tex
+推荐编译顺序如下：
+
+\begin{itemize}
+    \item 硕博：\texttt{xelatex main.tex} $\rightarrow$ \texttt{biber main} $\rightarrow$ \texttt{xelatex main.tex} $\rightarrow$ \texttt{xelatex main.tex}
+    \item 本科：\texttt{xelatex main-bachelor.tex} $\rightarrow$ \texttt{biber main-bachelor} $\rightarrow$ \texttt{xelatex main-bachelor.tex} $\rightarrow$ \texttt{xelatex main-bachelor.tex}
+\end{itemize}
+
+如果使用 \texttt{latexmk}，只需将主文件名替换为对应入口文件即可。
 
 \subsection{学位类型配置}
 
 \begin{itemize}
-    \item 本科使用 main-bachelor.tex
-    \item 硕博在 main.tex 中指定：\texttt{\textbackslash documentclass[master, arabicnumber]\{nkuthesis\}}
+    \item 本科直接使用 main-bachelor.tex 编译即可
+    \item 硕博在 main.tex 中指定：\texttt{\textbackslash documentclass[master, chinesenumber]\{nkuthesis\}}
     \item 可选学位：master（硕士）、doctor（博士）
-    \item 章节编号：arabicnumber（1.1样式）或 chinesenumber（第一章样式）
+    \item 章节编号：chinesenumber（第一章样式，默认）或 arabicnumber（1.1样式）
 \end{itemize}
 
 \subsection{个人信息填写}
 
-所有个人信息通过 \texttt{\textbackslash nkusetup\{\}} 统一设置，主要包括论文题目、作者信息、指导教师、学科专业等。
+所有个人信息通过 \texttt{\textbackslash nkusetup\{\}} 统一设置，主要包括论文题目、作者信息、指导教师、学科专业等。若填写了不合法的选项值，模板会在编译时给出提示。
 
 \section{本章小结}
 
-本章介绍了南开大学 \LaTeX 模板的使用环境、文件结构和基本配置方法。通过合理配置，用户可以快速开始学位论文的撰写工作。
+本章介绍了模板的编译环境、字体兼容、项目结构和上手顺序。理解这些基础内容后，用户通常可以在不修改类文件的情况下开始撰写自己的论文。

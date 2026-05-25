@@ -61,6 +61,9 @@
   \PackageWarning{nkuthesis}{未指定学位类型，默认使用硕士}%
 }{}
 
+\newcommand{\useprint}{
+  \printtrue
+}
 
 % ------------------------------
 % 基类设置
@@ -211,7 +214,7 @@
 \AtBeginDocument{
   % \setstretch{1.389}
   \linespread{1.0}                           % 设定单倍行距
-  \setlength{\baselineskip}{20bp}            % 设定基线间距
+  \setlength{\baselineskip}{20.0bp}            % 设定基线间距
   \setlength{\parskip}{0bp}                  % 确保段落之间没有额外空行
   % \setlength{\lineskiplimit}{0bp}            % 下面这两行防止 LaTeX 自动增加行间隙
   % \setlength{\lineskip}{0bp}
@@ -278,10 +281,15 @@
 \nku@definekey{非公开论文编号}{nonpublicid}
 \nku@definekey{备注}{remark}
 
-% 匿名评审页
+% 匿名评审页（硕士博士）
 \nku@definekey{一级学科}{firstsubject}
 \nku@definekey{二级学科}{secondsubject}
 \nku@definekey{论文编号}{paperid}
+
+% 匿名评审页（硕士专业/博士专业）
+\nku@definekey{专业学位类别}{profmajor}
+\nku@definekey{专业领域}{proffield}
+\nku@definekey{学位论文/实践成果编号}{profpaperid}
 
 % 本科部分
 \nku@definekey{年级}{bachelorgrade}
@@ -322,8 +330,8 @@
   \IfStrEqCase{\nkuget{thesistype}}{{硕士}{}{博士}{}{硕士专业}{}{博士专业}{}{}{}}[%
     \PackageError{nkuthesis}{未知的论文类别: [\nkuget{thesistype}] 可选项为 [硕士/博士/硕士专业/博士专业]}{请检查类别设置}%
   ]%
-  \IfStrEqCase{\nkuget{thesistype2}}{{博士}{}{学历硕士}{}{专业学位硕士}{}{同等学力硕士}{}{}{}}[%
-    \PackageWarning{nkuthesis}{未知的作者信息/论文类别: [\nkuget{thesistype2}] 可选项为 [博士/学历硕士/专业学位硕士/同等学力硕士]}{请检查类别设置}%
+  \IfStrEqCase{\nkuget{thesistype2}}{{学术博士}{}{专业学位博士}{}{学术硕士}{}{专业学位硕士}{}{同等学力硕士}{}{}{}}[%
+    \PackageWarning{nkuthesis}{未知的作者信息/论文类别: [\nkuget{thesistype2}] 可选项为 [学术博士/专业学位博士/学术硕士/专业学位硕士/同等学力硕士]}{请检查类别设置}%
   ]%
   \IfStrEqCase{\nkuget{cosupervisor}}{{}{\iscosupervisorfalse}}[\iscosupervisortrue]%
   \IfStrEqCase{\nkuget{bachelorinfoleftalign}}{{是}{\isbachelorinfoleftaligntrue}}[\isbachelorinfoleftalignfalse]%
@@ -388,9 +396,8 @@
   },
 }
 
-
 % 如果使用数字编码方式
-\ifnku@numberstyle@arabic
+\newcommand{\usearabicstyle}{
   \ctexset{
     chapter = {
         format     = \chapterformat\raggedright,
@@ -415,8 +422,11 @@
         number = \arabic{subsubsection}
     },
   }
-\fi
+}
 
+\ifnku@numberstyle@arabic
+  \usearabicstyle
+\fi
 
 % ------------------------------
 % 设置图表格式
@@ -513,12 +523,12 @@
 % 页码编号设置
 % ------------------------------
 \renewcommand\frontmatter{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \@mainmatterfalse
   \pagenumbering{Roman}%                  % 大写罗马数字编号
 }
 \renewcommand\mainmatter{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \@mainmattertrue
   \pagenumbering{arabic}%
 }
@@ -738,7 +748,7 @@
 }
 
 \newcommand{\maketitlepage}{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \thispagestyle{empty}
   \checkrequired{titlecn}{论文题目(中文)}%
   \checkrequired{titleen}{论文题目(英文)}%
@@ -802,42 +812,85 @@
 % 匿名评阅封面
 % ------------------------------
 \newcommand{\anonymoustitlepage}{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \thispagestyle{empty}
-
-  \vspace*{1mm}
-  \begin{center}
-    \includegraphics[width=7.0cm]{assets/nku_logo.pdf}
+  \ifthenelse{\equal{\nkuget{thesistype}}{硕士专业}\OR\equal{\nkuget{thesistype}}{博士专业}}{
+    % ----硕士专业/博士专业----
+    \ifthenelse{\equal{\nkuget{thesistype}}{硕士专业}}{
+      % 硕士专业
+      {\bfseries\centering\heiti\fontsize{20}{30}\selectfont 南开大学硕士学位论文/实践成果报告\par}
+      
+      \vspace{2mm}
+      {\centering\fangsong\zihao{-2} （匿名评阅学位论文/实践成果报告封面）\par}
     
-    \vspace{0.2\baselineskip}
-    {\bfseries \heiti \fontsize{28}{36}\selectfont
-      南开大学博士毕业（学位）论文\par}
+    }{
+      % 博士专业
+      \centering\includegraphics[width=7.0cm]{assets/nku_logo.pdf}
 
-    \vspace{1.2\baselineskip}
-    {\fangsong \zihao{-2}\selectfont
-      （匿名评阅封面）\par}
-  \end{center}
+      \vspace{0.8\baselineskip}
+      {\bfseries\centering\heiti\zihao{-1}\selectfont 南开大学博士学位论文/实践成果报告\par}
+      
+      \vspace{0.8\baselineskip}
+      {\fangsong \zihao{-2}\selectfont （匿名评阅封面）\par}
+    }
 
-  \vspace{25mm}
-  \hspace{13.5mm}
-  \begin{minipage}[t][60mm]{\textwidth-24mm}
-    {\zihao{3}\kaishu 论文题目：\par}
-    \vspace{5mm}
-    {\zihao{3}\kaishu\nkuget{titlecn}\par}
-    \vspace{5mm}
-    {\zihao{3}\songti\nkuget{titleen}\par}
-  \end{minipage}
-
-  {\kaishu \zihao{3}\selectfont
-    \vspace{5mm}
-    \hspace{10mm}
-    一级学科：\nkuget{firstsubject}\par
-    \vspace{5mm}
-    \hspace{10mm}
-    二级学科：\nkuget{secondsubject}\par
     \vspace{15mm}
-    \hspace{10mm}
-    论文编号：\nkuget{paperid}\par}
+    {\raggedright\fangsong\zihao{3} 学位论文/实践成果报告题目（含英文题目）：\par}
+    
+    \vspace{5mm}
+    \noindent
+    \begin{minipage}[t][50mm]{\textwidth}
+      \centering
+      {\zihao{3}\fangsong\linespread{1.3}\selectfont\nkuget{titlecn}\par}
+      \vspace{5mm}
+      {\zihao{3}\songti\linespread{1.3}\selectfont\nkuget{titleen}\par}
+    \end{minipage}
+
+    \vspace{15mm}
+    {\raggedright\fangsong\zihao{3} 专业学位类别：\nkuget{profmajor}\par}
+
+    \vspace{5mm}
+    {\raggedright\fangsong\zihao{3} 专业领域：\nkuget{proffield}\par}
+
+    \vspace{15mm}
+    {\raggedright\fangsong\zihao{3} 学位论文/实践成果编号：\nkuget{profpaperid}\par}
+
+  }{
+    % ----博士或者硕士----
+    \vspace*{1mm}
+    \begin{center}
+      \includegraphics[width=7.0cm]{assets/nku_logo.pdf}
+      
+      \vspace{0.2\baselineskip}
+      {\bfseries \heiti \fontsize{28}{36}\selectfont
+        南开大学\nkuget{thesistype}毕业（学位）论文\par}
+
+      \vspace{1.2\baselineskip}
+      {\fangsong \zihao{-2}\selectfont
+        （匿名评阅封面）\par}
+    \end{center}
+
+    \vspace{25mm}
+    \hspace{13.5mm}
+    \begin{minipage}[t][60mm]{\textwidth-24mm}
+      {\zihao{3}\kaishu 论文题目：\par}
+      \vspace{5mm}
+      {\zihao{3}\linespread{1.3}\fangsong\nkuget{titlecn}\par}
+      \vspace{5mm}
+      {\zihao{3}\linespread{1.3}\songti\nkuget{titleen}\par}
+    \end{minipage}
+
+    {\kaishu \zihao{3}\selectfont
+      \vspace{5mm}
+      \hspace{10mm}
+      一级学科：\nkuget{firstsubject}\par
+      \vspace{5mm}
+      \hspace{10mm}
+      二级学科：\nkuget{secondsubject}\par
+      \vspace{15mm}
+      \hspace{10mm}
+      论文编号：\nkuget{paperid}\par}
+  }
 }
 
 
@@ -864,9 +917,9 @@
 % ------------------------------
 % 附录部分设置
 % ------------------------------
-\let\oldppendix\appendix
+\let\oldappendix\appendix
 \renewcommand{\appendix}{%
-  \oldppendix
+  \oldappendix
   % 会持续到结束
   \setchaptercenter                       
 }
@@ -883,6 +936,7 @@
     \setchaptercenter
     \chapter*{个人简历}
   }
+  \usearabicstyle
   % \@afterheading
   \setlength{\parindent}{2em}
   \zihao{5}\songti
@@ -890,7 +944,7 @@
 }{}
 
 % 论文发表情况、其他获奖情况格式
-\newenvironment{achivements}{%
+\newenvironment{achievements}{%
   % \begin{enumerate}[leftmargin=1.85em]
   \begin{enumerate}[rightmargin=0.2em]
   \setlength{\parskip}{0bp}
@@ -907,7 +961,7 @@
 % 原创性声明、非公开学位论文标注说明
 % ------------------------------
 \newcommand{\declarationpage}{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \thispagestyle{empty}
   \vspace*{5mm}
   
@@ -1007,7 +1061,7 @@
 }
 
 \newcommand{\authorizationpage}{%
-  \clearpage
+  \ifprint \cleardoublepage \else \clearpage \fi
   \thispagestyle{empty}
   \vspace*{5mm}
 
@@ -1023,7 +1077,7 @@
     南开大学拥有在著作权法规定范围内学位论文的使用权，其中包括：
 
     已获学位的研究生必须按学校规定提交学位论文，学校可以采用影印、缩印或其他复制手段保存学位论
-    文；学校根据规定向教育部指定的收藏和存档单位提交学位论文；
+    文；学校根据规定向教育部指定的收藏和存档单位提交学位论文；并向教育主管部门提供包括但不限于内容复制等权限。
 
     为教学和科研目的，学校可以将公开的学位论文作为资料在图书馆、资料室等场所供校内师生阅读，或
     在校园网范围内供师生检索、浏览；
@@ -1042,7 +1096,7 @@
     \vspace{3mm}
     {\songti\zihao{5}\raggedleft 20\hskip 2em 年\hskip 2em 月\hskip 2em 日\par}
     
-    \vspace{22mm}
+    \vspace{15mm}
     {\heiti\zihao{4}\heiti\centering
     南开大学研究生学位论文作者信息
     \par}
@@ -1062,13 +1116,22 @@
         \justify{6em}{姓名}\vline\makebox[8em]{\nkuget{author}}\vline\justify{5em}{学号}
         \vline\makebox[7em]{\nkuget{studentid}}\vline\justify{6em}{答辩日期}\vline \justify{12em}{\nkuget{defensedate}} \\  
         \hline
-        \justify{6em}{论文类别}\vline\justify{38em}{
-          ~博士\ifthenelse{\equal{\nkuget{thesistype2}}{博士}}{\checkedcheckbox}{\checkbox} \quad 
-          学历硕士\ifthenelse{\equal{\nkuget{thesistype2}}{学历硕士}}{\checkedcheckbox}{\checkbox} \quad 
-          专业学位硕士\ifthenelse{\equal{\nkuget{thesistype2}}{专业学位硕士}}{\checkedcheckbox}{\checkbox} \quad 
-          同等学力硕士\ifthenelse{\equal{\nkuget{thesistype2}}{同等学力硕士}}{\checkedcheckbox}{\checkbox} \quad 
-          划\checkedcheckbox 选择~}\\
+        \justify{6em}{论文类别}\vline 
+        \begin{tabular}[c]{@{} p{6em} p{24em} p{6em} @{}}
+          & % 第一列留空，用来把中间的选项往右推
+          % 第二列：居中放置所有复选框选项
+          \begin{tabular}[c]{@{}c@{}}
+            学术博士\ifthenelse{\equal{\nkuget{thesistype2}}{学术博士}}{\checkedcheckbox}{\checkbox} \quad 
+            专业学位博士\ifthenelse{\equal{\nkuget{thesistype2}}{专业学位博士}}{\checkedcheckbox}{\checkbox} \quad 
+            学术硕士\ifthenelse{\equal{\nkuget{thesistype2}}{学术硕士}}{\checkedcheckbox}{\checkbox} \\
+            专业学位硕士\ifthenelse{\equal{\nkuget{thesistype2}}{专业学位硕士}}{\checkedcheckbox}{\checkbox} \quad 
+            同等学力硕士\ifthenelse{\equal{\nkuget{thesistype2}}{同等学力硕士}}{\checkedcheckbox}{\checkbox}
+          \end{tabular} & 
+          % 第三列：靠右对齐的提示文字
+          \hfill 划\checkedcheckbox 选择
+        \end{tabular}\\
         \hline
+
         \justify{6em}{学院（单位）}\vline\makebox[13em]{\nkuget{department}}\vline\justify{13em}{学科/专业（专业学位）名称}\hspace{3pt}\vline\makebox[12em]{\nkuget{major}}\\
         \hline
         \justify{6em}{联系电话}\vline\makebox[13em]{\nkuget{phone}}\vline\justify{5em}{电子邮箱}\vline\makebox[20em]{\nkuget{email}}\\
